@@ -16,20 +16,40 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li v-if="!isAuthenticated" class="nav-item">
-            <router-link to="/" class="nav-link">Strona główna</router-link>
-          </li>
-          <li v-if="isAuthenticated" class="nav-item">
-            <router-link to="/dashboard" class="nav-link">Znajdź zlecenie</router-link>
-          </li>
-          <li v-if="isAuthenticated" class="nav-item">
-            <router-link to="/me" class="nav-link">Profil</router-link>
-          </li>
-          <li v-if="isAuthenticated" class="nav-item">
-            <button @click="logout" class="btn btn-outline-danger ms-2">
-              Wyloguj
-            </button>
-          </li>
+          <!-- Guest navigation -->
+          <template v-if="!isAuthenticated">
+            <li class="nav-item">
+              <router-link to="/" class="nav-link">Strona główna</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/login" class="nav-link">Logowanie</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/register" class="btn btn-primary ms-2">
+                Rejestracja
+              </router-link>
+            </li>
+          </template>
+
+          <!-- Authenticated navigation -->
+          <template v-else>
+            <li class="nav-item">
+              <router-link to="/dashboard" class="nav-link">
+                {{ isAdvertiser ? 'Panel' : 'Znajdź zlecenie' }}
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/me" class="nav-link">Profil</router-link>
+            </li>
+            <li class="nav-item">
+              <span class="navbar-text me-2">{{ user?.display_name }}</span>
+            </li>
+            <li class="nav-item">
+              <button @click="logout" class="btn btn-outline-danger">
+                Wyloguj
+              </button>
+            </li>
+          </template>
         </ul>
       </div>
     </div>
@@ -45,6 +65,8 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
+const isAdvertiser = computed(() => authStore.isAdvertiser)
+const user = computed(() => authStore.user)
 
 const logout = () => {
   authStore.logout()

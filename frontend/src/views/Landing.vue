@@ -9,55 +9,29 @@
           Łączymy marki z influencerami dla skutecznych kampanii marketingowych
         </p>
 
-        <div v-if="!showRegistration" class="hero-container">
+        <div class="hero-container">
           <HeroCircles @select-role="handleRoleSelection" />
         </div>
 
-        <div v-else class="registration-container">
-          <AuthRegister
-            :role="selectedRole"
-            @success="handleRegistrationSuccess"
-            @show-login="showLogin = true"
-          />
+        <div class="auth-links mt-4">
+          <router-link to="/login" class="btn btn-outline-primary me-3">
+            Masz już konto? Zaloguj się
+          </router-link>
         </div>
       </div>
     </div>
-
-    <!-- Login Modal -->
-    <AuthLogin
-      v-if="showLogin"
-      @close="showLogin = false"
-      @success="handleLoginSuccess"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import HeroCircles from '../components/HeroCircles.vue'
-import AuthRegister from '../components/AuthRegister.vue'
-import AuthLogin from '../components/AuthLogin.vue'
 import type { UserRole } from '../types'
 
 const router = useRouter()
 
-const showRegistration = ref(false)
-const showLogin = ref(false)
-const selectedRole = ref<UserRole>('advertiser')
-
 const handleRoleSelection = (role: UserRole) => {
-  selectedRole.value = role
-  showRegistration.value = true
-}
-
-const handleRegistrationSuccess = () => {
-  router.push('/dashboard')
-}
-
-const handleLoginSuccess = () => {
-  showLogin.value = false
-  router.push('/dashboard')
+  router.push(`/register/${role}`)
 }
 </script>
 
@@ -72,9 +46,7 @@ const handleLoginSuccess = () => {
   margin: 2rem 0;
 }
 
-.registration-container {
-  display: flex;
-  justify-content: center;
+.auth-links {
   margin: 2rem 0;
 }
 </style>
