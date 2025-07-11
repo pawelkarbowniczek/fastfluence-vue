@@ -1,15 +1,19 @@
 import axios from 'axios'
-import type { 
-  User, 
-  Campaign, 
-  CampaignFilters, 
-  CreatorFilters, 
-  LoginData, 
-  RegisterData, 
-  AuthResponse 
+import type {
+  User,
+  Campaign,
+  CampaignFilters,
+  CreatorFilters,
+  LoginData,
+  RegisterData,
+  AuthResponse
 } from '../types'
 
-const API_BASE_URL ='https://api.fastfluence.home.lineofcode.pl'
+// Konfiguracja dla bezpośrednich domen
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? 'https://api.fastfluence.home.lineofcode.pl'
+    : 'http://localhost:8000')
 
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
@@ -41,11 +45,11 @@ api.interceptors.response.use(
 
 // Auth API
 export const authApi = {
-  login: (data: LoginData): Promise<AuthResponse> => 
+  login: (data: LoginData): Promise<AuthResponse> =>
     api.post('/auth/token', data, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     }).then(res => res.data),
-  
+
   register: (data: RegisterData): Promise<User> =>
     api.post('/auth/register', data).then(res => res.data),
 }
@@ -54,10 +58,10 @@ export const authApi = {
 export const userApi = {
   getCurrentUser: (): Promise<User> =>
     api.get('/users/me').then(res => res.data),
-  
+
   updateCurrentUser: (data: Partial<User>): Promise<User> =>
     api.put('/users/me', data).then(res => res.data),
-  
+
   getUser: (id: number): Promise<User> =>
     api.get(`/users/${id}`).then(res => res.data),
 }
@@ -66,16 +70,16 @@ export const userApi = {
 export const campaignApi = {
   getCampaigns: (filters?: CampaignFilters): Promise<Campaign[]> =>
     api.get('/campaigns', { params: filters }).then(res => res.data),
-  
+
   getCampaign: (id: number): Promise<Campaign> =>
     api.get(`/campaigns/${id}`).then(res => res.data),
-  
+
   createCampaign: (data: Partial<Campaign>): Promise<Campaign> =>
     api.post('/campaigns', data).then(res => res.data),
-  
+
   updateCampaign: (id: number, data: Partial<Campaign>): Promise<Campaign> =>
     api.put(`/campaigns/${id}`, data).then(res => res.data),
-  
+
   deleteCampaign: (id: number): Promise<void> =>
     api.delete(`/campaigns/${id}`).then(res => res.data),
 }
