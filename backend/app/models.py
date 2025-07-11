@@ -1,12 +1,15 @@
 from datetime import datetime
 from enum import Enum
 from typing import Optional, List
-from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy import JSON
+from sqlmodel import SQLModel, Field, Relationship, Column
 from pydantic import BaseModel
+
 
 class UserRole(str, Enum):
     ADVERTISER = "advertiser"
     CREATOR = "creator"
+
 
 class MediaChannel(str, Enum):
     INSTAGRAM = "Instagram"
@@ -17,15 +20,18 @@ class MediaChannel(str, Enum):
     LINKEDIN = "LinkedIn"
     OTHER = "Other"
 
+
 class CompensationType(str, Enum):
     CASH = "Cash"
     BARTER = "Barter"
     MIXED = "Mixed"
 
+
 class ApplicationStatus(str, Enum):
     PENDING = "pending"
     ACCEPTED = "accepted"
     REJECTED = "rejected"
+
 
 class PortfolioCampaign(BaseModel):
     title: str
@@ -34,6 +40,7 @@ class PortfolioCampaign(BaseModel):
     landing_url: Optional[str] = None
     cover_image_url: Optional[str] = None
     short_description: str = Field(max_length=280)
+
 
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -44,12 +51,13 @@ class User(SQLModel, table=True):
     contact_email: str
     phone: Optional[str] = None
     website_url: Optional[str] = None
-    social_links: List[str] = Field(default_factory=list)
-    portfolio: List[PortfolioCampaign] = Field(default_factory=list)
+    social_links: List[str] = Field(default_factory=list, sa_column=Column(JSON))
+    portfolio: List[PortfolioCampaign] = Field(default_factory=list, sa_column=Column(JSON))
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     campaigns: List["Campaign"] = Relationship(back_populates="owner")
     applications: List["Application"] = Relationship(back_populates="creator")
+
 
 class Campaign(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -65,9 +73,10 @@ class Campaign(SQLModel, table=True):
     barter_descr: Optional[str] = None
     deadline: datetime
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     owner: User = Relationship(back_populates="campaigns")
     applications: List["Application"] = Relationship(back_populates="campaign")
+
 
 class Application(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -76,6 +85,6 @@ class Application(SQLModel, table=True):
     pitch_text: str
     status: ApplicationStatus = Field(default=ApplicationStatus.PENDING)
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     campaign: Campaign = Relationship(back_populates="applications")
     creator: User = Relationship(back_populates="applications")
