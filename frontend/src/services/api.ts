@@ -27,8 +27,21 @@ export const api = axios.create({
   },
 })
 
+// DEBUG: Sprawdź co axios faktycznie używa
+console.log('🔧 axios baseURL:', api.defaults.baseURL)
+
 // Request interceptor to add auth token
 api.interceptors.request.use((config) => {
+  // FORCE HTTPS - wymuś HTTPS jeśli wykryto HTTP
+  if (config.url && config.baseURL && config.baseURL.startsWith('http://')) {
+    config.baseURL = config.baseURL.replace('http://', 'https://')
+    console.log('🔧 FORCED HTTPS - Fixed baseURL:', config.baseURL)
+  }
+
+  // DEBUG: Sprawdź każde żądanie
+  console.log('🔧 Request URL:', config.url)
+  console.log('🔧 Full URL:', config.baseURL + config.url)
+
   const token = localStorage.getItem('access_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

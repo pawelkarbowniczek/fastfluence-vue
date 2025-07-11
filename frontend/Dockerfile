@@ -9,10 +9,10 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# NAPRAWA: Vite potrzebuje index.html w root dla SPA routing
-RUN cp public/index.html ./index.html
+# Ustaw zmienne środowiskowe
+ENV VITE_API_BASE_URL=https://api.fastfluence.home.lineofcode.pl
 
 EXPOSE 5173
 
-# Start development server
+# Uruchom w trybie development z poprawnym API URL
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
