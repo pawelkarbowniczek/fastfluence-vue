@@ -6,7 +6,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    // Usunięto proxy - używamy bezpośrednich domen
+    allowedHosts: [
+      'fastfluence.home.lineofcode.pl',
+      'localhost',
+      '127.0.0.1'
+    ]
+
   },
   // Build configuration
   build: {
