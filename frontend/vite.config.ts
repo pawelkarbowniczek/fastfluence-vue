@@ -6,6 +6,6 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    // Usunięto proxy - Caddy zajmuje się routingiem
+    allowedHosts: ['fastfluence.home.lineofcode.pl']
   },
 })
