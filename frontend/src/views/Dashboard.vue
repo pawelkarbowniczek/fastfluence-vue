@@ -3,20 +3,22 @@
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-12">
-          <h1 class="mb-4">
-            {{ isAdvertiser ? 'Panel Reklamodawcy' : 'Panel Influencera' }}
+          <h1 class="page-title">
+            {{ isAdvertiser ? 'Panel Reklamodawcy' : 'Znajdź zlecenie' }}
           </h1>
-          
-          <div class="row mb-4">
-            <div class="col-md-8">
-              <SearchBar 
-                v-model="filters"
-                :type="isAdvertiser ? 'creators' : 'campaigns'"
-                @search="handleSearch"
-              />
-            </div>
-            <div class="col-md-4 text-end">
-              <button 
+
+          <SearchBar
+            v-model="filters"
+            :type="isAdvertiser ? 'creators' : 'campaigns'"
+            @search="handleSearch"
+          />
+
+          <div class="content-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="section-title">
+                {{ isAdvertiser ? 'Moje kampanie' : 'Dostępne kampanie' }}
+              </h3>
+              <button
                 v-if="isAdvertiser"
                 @click="showCampaignForm = true"
                 class="btn btn-primary"
@@ -24,55 +26,47 @@
                 Dodaj kampanię
               </button>
             </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-12">
-              <div v-if="isAdvertiser" class="advertiser-view">
-                <div class="mb-4">
-                  <h3>Moje kampanie</h3>
-                  <TableBase 
-                    :data="myCampaigns"
-                    :columns="campaignColumns"
-                  >
-                    <template #cell-title="{ item }">
-                      <strong>{{ item.title }}</strong>
-                    </template>
-                    <template #cell-compensation="{ item }">
-                      <span class="badge bg-info">{{ item.compensation }}</span>
-                      <span v-if="item.budget_min && item.budget_max" class="text-muted small d-block">
-                        {{ item.budget_min }} - {{ item.budget_max }} PLN
-                      </span>
-                    </template>
-                    <template #actions="{ item }">
-                      <button @click="editCampaign(item)" class="btn btn-sm btn-outline-primary me-2">
-                        Edytuj
-                      </button>
-                      <button @click="deleteCampaign(item.id)" class="btn btn-sm btn-outline-danger">
-                        Usuń
-                      </button>
-                    </template>
-                  </TableBase>
-                </div>
-                
-                <div>
-                  <h3>Szukaj twórców</h3>
-                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    <div v-for="creator in creators" :key="creator.id" class="col">
-                      <CreatorCard :creator="creator" />
-                    </div>
+
+            <div v-if="isAdvertiser" class="advertiser-view">
+              <div class="mb-5">
+                <TableBase
+                  :data="myCampaigns"
+                  :columns="campaignColumns"
+                >
+                  <template #cell-title="{ item }">
+                    <strong>{{ item.title }}</strong>
+                  </template>
+                  <template #cell-compensation="{ item }">
+                    <span class="badge bg-info">{{ item.compensation }}</span>
+                    <span v-if="item.budget_min && item.budget_max" class="text-muted small d-block">
+                      {{ item.budget_min }} - {{ item.budget_max }} PLN
+                    </span>
+                  </template>
+                  <template #actions="{ item }">
+                    <button @click="editCampaign(item)" class="btn btn-sm btn-outline-primary me-2">
+                      Edytuj
+                    </button>
+                    <button @click="deleteCampaign(item.id)" class="btn btn-sm btn-outline-danger">
+                      Usuń
+                    </button>
+                  </template>
+                </TableBase>
+              </div>
+
+              <div>
+                <h3 class="section-title mb-4">Szukaj twórców</h3>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                  <div v-for="creator in creators" :key="creator.id" class="col">
+                    <CreatorCard :creator="creator" />
                   </div>
                 </div>
               </div>
-              
-              <div v-else class="creator-view">
-                <div class="mb-4">
-                  <h3>Dostępne kampanie</h3>
-                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    <div v-for="campaign in campaigns" :key="campaign.id" class="col">
-                      <CampaignCard :campaign="campaign" />
-                    </div>
-                  </div>
+            </div>
+
+            <div v-else class="creator-view">
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div v-for="campaign in campaigns" :key="campaign.id" class="col">
+                  <CampaignCard :campaign="campaign" />
                 </div>
               </div>
             </div>
@@ -80,7 +74,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Campaign Form Modal -->
     <ModalBase v-if="showCampaignForm" @close="closeCampaignForm">
       <div class="modal-header">
@@ -89,9 +83,9 @@
         </h5>
         <button type="button" class="btn-close" @click="closeCampaignForm"></button>
       </div>
-      
+
       <div class="modal-body">
-        <CampaignForm 
+        <CampaignForm
           :campaign="editingCampaign"
           :is-loading="isLoading"
           @submit="handleCampaignSubmit"
@@ -150,13 +144,13 @@ const handleSearch = async (searchFilters: CampaignFilters | CreatorFilters) => 
 const handleCampaignSubmit = async (data: Partial<Campaign>) => {
   try {
     isLoading.value = true
-    
+
     if (editingCampaign.value) {
       await campaignsStore.updateCampaign(editingCampaign.value.id, data)
     } else {
       await campaignsStore.createCampaign(data)
     }
-    
+
     closeCampaignForm()
     await loadData()
   } catch (error) {
@@ -207,9 +201,33 @@ onMounted(() => {
 <style scoped>
 .dashboard {
   min-height: 80vh;
+  background: #f8f9fa;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+}
+
+.content-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
 }
 
 .advertiser-view, .creator-view {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 </style>

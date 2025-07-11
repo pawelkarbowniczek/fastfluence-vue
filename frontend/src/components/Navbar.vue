@@ -4,23 +4,23 @@
       <router-link to="/" class="navbar-brand fw-bold fs-3">
         <span class="text-primary">Fast</span><span class="text-success">Fluence</span>
       </router-link>
-      
-      <button 
-        class="navbar-toggler" 
-        type="button" 
-        data-bs-toggle="collapse" 
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
         data-bs-target="#navbarNav"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li v-if="!isAuthenticated" class="nav-item">
             <router-link to="/" class="nav-link">Strona główna</router-link>
           </li>
           <li v-if="isAuthenticated" class="nav-item">
-            <router-link to="/dashboard" class="nav-link">Panel</router-link>
+            <router-link to="/dashboard" class="nav-link">Znajdź zlecenie</router-link>
           </li>
           <li v-if="isAuthenticated" class="nav-item">
             <router-link to="/me" class="nav-link">Profil</router-link>
