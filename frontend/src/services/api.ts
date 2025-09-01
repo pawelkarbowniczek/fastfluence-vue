@@ -9,16 +9,10 @@ import type {
   AuthResponse
 } from '../types'
 
-// Konfiguracja dla Portainer/Docker - sprawdza domenę zamiast trybu
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
   (window.location.hostname.includes('fastfluence.home.lineofcode.pl')
     ? 'https://api.fastfluence.home.lineofcode.pl'
     : 'http://localhost:8000')
-
-// DEBUG: Sprawdź co faktycznie jest używane
-console.log('🔧 API_BASE_URL:', API_BASE_URL)
-console.log('🔧 window.location.hostname:', window.location.hostname)
-console.log('🔧 import.meta.env.VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL)
 
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
@@ -27,20 +21,11 @@ export const api = axios.create({
   },
 })
 
-// DEBUG: Sprawdź co axios faktycznie używa
-console.log('🔧 axios baseURL:', api.defaults.baseURL)
-
 // Request interceptor to add auth token
 api.interceptors.request.use((config) => {
-  // FORCE HTTPS - wymuś HTTPS jeśli wykryto HTTP
   if (config.url && config.baseURL && config.baseURL.startsWith('http://')) {
     config.baseURL = config.baseURL.replace('http://', 'https://')
-    console.log('🔧 FORCED HTTPS - Fixed baseURL:', config.baseURL)
   }
-
-  // DEBUG: Sprawdź każde żądanie
-  console.log('🔧 Request URL:', config.url)
-  console.log('🔧 Full URL:', config.baseURL + config.url)
 
   const token = localStorage.getItem('access_token')
   if (token) {
@@ -70,6 +55,12 @@ export const authApi = {
 
   register: (data: RegisterData): Promise<User> =>
     api.post('/auth/register', data).then(res => res.data),
+
+  activateAccount: (token: string): Promise<{ message: string }> =>
+    api.post(`/auth/activate/${token}`).then(res => res.data),
+
+  resendActivation: (email: string): Promise<{ message: string }> =>
+    api.post('/auth/resend-activation', null, { params: { email } }).then(res => res.data),
 }
 
 // User API

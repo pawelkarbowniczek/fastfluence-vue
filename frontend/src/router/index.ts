@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Profile from '../views/Profile.vue'
+import ActivateAccount from '../views/ActivateAccount.vue'
 import NotFound from '../views/NotFound.vue'
 
 const router = createRouter({
@@ -27,6 +28,12 @@ const router = createRouter({
       component: Register,
       meta: { requiresGuest: true },
       props: route => ({ role: route.params.role })
+    },
+    {
+      path: '/activate/:token',
+      name: 'activate',
+      component: ActivateAccount,
+      meta: { requiresGuest: true }
     },
     {
       path: '/dashboard',

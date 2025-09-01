@@ -17,6 +17,29 @@ services:
     environment:
       DATABASE_URL: postgresql://fastfluence:fastfluence@postgres:5432/fastfluence
       SECRET_KEY: your-secret-key-change-in-production
+      FRONTEND_URL: http://localhost:5173
+
+      # SendGrid Configuration (recommended)
+      USE_SENDGRID_API: "true"
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SMTP_FROM_EMAIL: noreply@fastfluence.pl
+
+      # Alternative SMTP Configuration (Gmail example)
+      # USE_SENDGRID_API: "false"
+      # SMTP_HOST: smtp.gmail.com
+      # SMTP_PORT: 587
+      # SMTP_USERNAME: your-email@gmail.com
+      # SMTP_PASSWORD: your-app-password
+      # SMTP_FROM_EMAIL: noreply@fastfluence.pl
+
+      # SendGrid SMTP (alternative to API)
+      # USE_SENDGRID_API: "false"
+      # SMTP_HOST: smtp.sendgrid.net
+      # SMTP_PORT: 587
+      # SMTP_USERNAME: apikey
+      # SMTP_PASSWORD: ${SENDGRID_API_KEY}
+      # SMTP_FROM_EMAIL: noreply@fastfluence.pl
+
     depends_on:
       - postgres
     ports:

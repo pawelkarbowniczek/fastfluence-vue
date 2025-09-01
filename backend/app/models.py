@@ -53,6 +53,12 @@ class User(SQLModel, table=True):
     website_url: Optional[str] = None
     social_links: List[str] = Field(default_factory=list, sa_column=Column(JSON))
     portfolio: List[PortfolioCampaign] = Field(default_factory=list, sa_column=Column(JSON))
+
+    # Email activation fields
+    is_active: bool = Field(default=False)
+    activation_token: Optional[str] = Field(default=None)
+    activation_token_expires: Optional[datetime] = Field(default=None)
+
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     campaigns: List["Campaign"] = Relationship(back_populates="owner")
