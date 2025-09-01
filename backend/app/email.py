@@ -8,6 +8,10 @@ from sendgrid.helpers.mail import Mail, Email
 
 from .config import settings
 from .models import User
+import logging
+
+logger = logging.getLogger(__name__)
+logger.warning("Email service logger wired up.")
 
 
 # --- helpers -----------------------------------------------------------------
@@ -66,6 +70,14 @@ def send_email_via_sendgrid(
     Send email using SendGrid Python SDK.
     Zwraca True tylko gdy API odpowie 202.
     """
+    logger.warning(
+        "[SendGrid] Sending email | from=%s <%s> -> to=%s | subject=%r | api_key=%s",
+        from_name or "",
+        from_email,
+        to_email,
+        subject,
+        settings.SENDGRID_API_KEY,
+    )
     try:
         if not getattr(settings, "SENDGRID_API_KEY", None):
             raise RuntimeError("Missing SENDGRID_API_KEY in settings")
@@ -81,13 +93,39 @@ def send_email_via_sendgrid(
         # (opcjonalnie) przykładowa kategoria:
         # message.category = "transactional"
 
+        logger.info(
+            "[SendGrid] Sending email | from=%s <%s> -> to=%s | subject=%r | api_key=%s",
+            from_name or "",
+            from_email,
+            to_email,
+            subject,
+            settings.SENDGRID_API_KEY,
+        )
         sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
         response = sg.send(message)
-
+        headers = dict(response.headers or {})
+        request_id = headers.get("X-Message-Id") or headers.get("X-Request-Id") or headers.get("X-Message-ID")
+        logger.debug("[SendGrid] Raw headers: %s", headers)
         if response.status_code == 202:
             print(f"[SendGrid] Email sent to {to_email}")
+            logger.info(
+                "[SendGrid] Email accepted (202) | to=%s | request_id=%s",
+                to_email,
+                request_id or "<unknown>",
+            )
             return True
-
+        body = response.body
+        try:
+            body_str = body.decode("utf-8") if hasattr(body, "decode") else str(body)
+        except Exception:
+            body_str = "<unreadable>"
+        logger.error(
+            "[SendGrid] Error %s | to=%s | request_id=%s | body=%s",
+            response.status_code,
+            to_email,
+            request_id or "<unknown>",
+            body_str,
+        )
         print(f"[SendGrid] Error {response.status_code}: {response.body}")
         return False
 
