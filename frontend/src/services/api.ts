@@ -20,9 +20,7 @@ export const api = axios.create({
 
 // Request interceptor to add auth token
 api.interceptors.request.use((config) => {
-  if (config.url && config.baseURL && config.baseURL.startsWith('http://')) {
-    config.baseURL = config.baseURL.replace('http://', 'https://')
-  }
+
 
   const token = localStorage.getItem('access_token')
   if (token) {
