@@ -9,10 +9,7 @@ import type {
   AuthResponse
 } from '../types'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
-  (window.location.hostname.includes('fastfluence.home.lineofcode.pl')
-    ? 'https://api.fastfluence.home.lineofcode.pl'
-    : 'http://localhost:8000')
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
