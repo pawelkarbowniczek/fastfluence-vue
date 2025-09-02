@@ -2,15 +2,16 @@ import axios from 'axios'
 import type {
   User,
   Campaign,
+  Application,
   CampaignFilters,
   CreatorFilters,
   LoginData,
   RegisterData,
   AuthResponse,
-  Auth0LoginRequest
+  ApplicationCreateData
 } from '../types'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
@@ -55,18 +56,6 @@ export const authApi = {
 
   resendActivation: (email: string): Promise<{ message: string }> =>
     api.post('/auth/resend-activation', null, { params: { email } }).then(res => res.data),
-
-  // Auth0 integration
-  auth0Login: (data: Auth0LoginRequest): Promise<AuthResponse> =>
-    api.post('/auth/auth0/token', data).then(res => res.data),
-
-  getAuth0Config: (): Promise<{
-    domain: string,
-    client_id: string,
-    audience: string,
-    callback_url: string
-  }> =>
-    api.get('/auth/auth0/info').then(res => res.data),
 }
 
 // User API
@@ -103,4 +92,19 @@ export const campaignApi = {
 export const creatorApi = {
   getCreators: (filters?: CreatorFilters): Promise<User[]> =>
     api.get('/creators', { params: filters }).then(res => res.data),
+}
+
+// Application API
+export const applicationApi = {
+  getApplications: (campaignId?: number): Promise<Application[]> =>
+    api.get('/applications', { params: { campaign_id: campaignId } }).then(res => res.data),
+
+  createApplication: (data: ApplicationCreateData): Promise<Application> =>
+    api.post('/applications', data).then(res => res.data),
+
+  updateApplicationStatus: (id: number, status: string): Promise<Application> =>
+    api.put(`/applications/${id}`, { status }).then(res => res.data),
+
+  deleteApplication: (id: number): Promise<void> =>
+    api.delete(`/applications/${id}`).then(res => res.data),
 }

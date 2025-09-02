@@ -5,11 +5,11 @@
         <h5 class="card-title">{{ campaign.title }}</h5>
         <span class="badge bg-primary">{{ campaign.media_channel }}</span>
       </div>
-      
+
       <p class="card-text text-muted small">
         {{ campaign.description }}
       </p>
-      
+
       <div class="campaign-details">
         <div class="row g-2 mb-3">
           <div class="col-6">
@@ -21,7 +21,7 @@
             <div class="fw-semibold">{{ campaign.location }}</div>
           </div>
         </div>
-        
+
         <div class="compensation-info mb-3">
           <small class="text-muted">Wynagrodzenie:</small>
           <div class="fw-semibold">
@@ -34,25 +34,32 @@
             {{ campaign.barter_descr }}
           </div>
         </div>
-        
+
         <div class="deadline-info mb-3">
           <small class="text-muted">Deadline:</small>
           <div class="fw-semibold">{{ formatDate(campaign.deadline) }}</div>
         </div>
-        
+
         <div class="owner-info">
           <small class="text-muted">Reklamodawca:</small>
           <div class="fw-semibold">{{ campaign.owner.display_name }}</div>
         </div>
       </div>
     </div>
-    
+
     <div class="card-footer bg-transparent">
       <div class="d-flex gap-2">
-        <button class="btn btn-outline-primary btn-sm flex-fill">
+        <button
+          @click="$emit('view-details', campaign)"
+          class="btn btn-outline-primary btn-sm flex-fill"
+        >
           Zobacz szczegóły
         </button>
-        <button v-if="canApply" class="btn btn-primary btn-sm flex-fill">
+        <button
+          v-if="canApply"
+          @click="$emit('apply', campaign)"
+          class="btn btn-primary btn-sm flex-fill"
+        >
           Aplikuj
         </button>
       </div>
@@ -70,6 +77,11 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  'view-details': [campaign: Campaign]
+  'apply': [campaign: Campaign]
+}>()
 
 const authStore = useAuthStore()
 

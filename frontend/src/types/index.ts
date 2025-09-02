@@ -9,7 +9,6 @@ export interface User {
   social_links: string[]
   portfolio: PortfolioCampaign[]
   created_at: string
-  auth0_id?: string
 }
 
 export interface PortfolioCampaign {
@@ -38,8 +37,21 @@ export interface Campaign {
   owner: User
 }
 
+export interface Application {
+  id: number
+  campaign_id: number
+  creator_id: number
+  pitch_text: string
+  proposed_price?: number
+  status: ApplicationStatus
+  created_at: string
+  campaign: Campaign
+  creator: User
+}
+
 export type MediaChannel = 'Instagram' | 'TikTok' | 'YouTube' | 'Blog' | 'Facebook' | 'LinkedIn' | 'Other'
 export type CompensationType = 'Cash' | 'Barter' | 'Mixed'
+export type ApplicationStatus = 'pending' | 'accepted' | 'rejected'
 export type UserRole = 'advertiser' | 'creator'
 
 export interface CampaignFilters {
@@ -85,18 +97,8 @@ export interface AuthResponse {
   token_type: string
 }
 
-// Auth0 specific types
-export interface Auth0LoginRequest {
-  auth0_id: string
-  email: string
-  display_name?: string
-  role: UserRole
-  picture?: string
-}
-
-export interface Auth0Config {
-  domain: string
-  client_id: string
-  audience: string
-  callback_url: string
+export interface ApplicationCreateData {
+  campaign_id: number
+  pitch_text: string
+  proposed_price?: number
 }
