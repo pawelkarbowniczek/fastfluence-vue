@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Profile from '../views/Profile.vue'
+import AddCampaign from '../views/AddCampaign.vue'
 import ActivateAccount from '../views/ActivateAccount.vue'
 import Auth0Callback from '../views/Auth0Callback.vue'
 import NotFound from '../views/NotFound.vue'
@@ -54,6 +55,19 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/campaigns/add',
+      name: 'add-campaign',
+      component: AddCampaign,
+      meta: { requiresAuth: true, requiresAdvertiser: true }
+    },
+    {
+      path: '/campaigns/edit/:id',
+      name: 'edit-campaign',
+      component: AddCampaign,
+      meta: { requiresAuth: true, requiresAdvertiser: true },
+      props: true
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFound
@@ -67,6 +81,8 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
   } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    next('/dashboard')
+  } else if (to.meta.requiresAdvertiser && !authStore.isAdvertiser) {
     next('/dashboard')
   } else {
     next()

@@ -35,19 +35,54 @@
           <template v-else>
             <li class="nav-item">
               <router-link to="/dashboard" class="nav-link">
-                {{ isAdvertiser ? 'Panel' : 'Znajdź zlecenie' }}
+                <i class="fas fa-home me-1"></i>
+                {{ isAdvertiser ? 'Panel' : 'Znajdź zlecenia' }}
+              </router-link>
+            </li>
+            <li v-if="isAdvertiser" class="nav-item">
+              <router-link to="/campaigns/add" class="nav-link">
+                <i class="fas fa-plus me-1"></i>
+                Dodaj kampanię
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/me" class="nav-link">Profil</router-link>
+              <router-link to="/me" class="nav-link">
+                <i class="fas fa-user me-1"></i>
+                Profil
+              </router-link>
             </li>
-            <li class="nav-item">
-              <span class="navbar-text me-2">{{ user?.display_name }}</span>
-            </li>
-            <li class="nav-item">
-              <button @click="handleLogout" class="btn btn-outline-danger">
-                Wyloguj
-              </button>
+            <li class="nav-item dropdown" v-if="user">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <span class="fw-semibold">{{ user.display_name }}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li>
+                  <router-link class="dropdown-item" to="/me">
+                    <i class="fas fa-user-edit me-2"></i>
+                    Edytuj profil
+                  </router-link>
+                </li>
+                <li v-if="isAdvertiser">
+                  <router-link class="dropdown-item" to="/campaigns/add">
+                    <i class="fas fa-plus me-2"></i>
+                    Nowa kampania
+                  </router-link>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <button @click="handleLogout" class="dropdown-item text-danger">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Wyloguj się
+                  </button>
+                </li>
+              </ul>
             </li>
           </template>
         </ul>
@@ -86,3 +121,71 @@ const handleLogout = async () => {
   router.push('/')
 }
 </script>
+
+<style scoped>
+.navbar {
+  backdrop-filter: blur(10px);
+  background: rgba(248, 249, 250, 0.95) !important;
+}
+
+.navbar-brand {
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 0.25rem;
+  padding: 0.5rem 1rem !important;
+}
+
+.nav-link:hover {
+  background: rgba(125, 60, 255, 0.1);
+  color: var(--violet) !important;
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--violet);
+  border-color: var(--violet);
+  border-radius: 25px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #6B2FDB;
+  border-color: #6B2FDB;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(125, 60, 255, 0.3);
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  padding: 0.5rem 0;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: rgba(125, 60, 255, 0.1);
+  color: var(--violet);
+}
+
+.dropdown-item.text-danger:hover {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545 !important;
+}
+</style>

@@ -1,19 +1,20 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="campaign-form">
+  <div class="campaign-form">
     <div class="row">
       <div class="col-md-6">
         <div class="mb-3">
           <label for="title" class="form-label">Tytuł kampanii</label>
-          <input 
-            v-model="form.title" 
-            type="text" 
-            class="form-control" 
+          <input
+            v-model="form.title"
+            type="text"
+            class="form-control"
             id="title"
             required
+            placeholder="Wprowadź tytuł kampanii"
           >
         </div>
       </div>
-      
+
       <div class="col-md-6">
         <div class="mb-3">
           <label for="category" class="form-label">Kategoria</label>
@@ -29,18 +30,19 @@
         </div>
       </div>
     </div>
-    
+
     <div class="mb-3">
       <label for="description" class="form-label">Opis kampanii</label>
-      <textarea 
-        v-model="form.description" 
-        class="form-control" 
+      <textarea
+        v-model="form.description"
+        class="form-control"
         id="description"
         rows="4"
         required
+        placeholder="Opisz szczegóły kampanii, oczekiwania i wymagania"
       ></textarea>
     </div>
-    
+
     <div class="row">
       <div class="col-md-6">
         <div class="mb-3">
@@ -57,29 +59,30 @@
           </select>
         </div>
       </div>
-      
+
       <div class="col-md-6">
         <div class="mb-3">
           <label for="location" class="form-label">Lokalizacja</label>
-          <input 
-            v-model="form.location" 
-            type="text" 
-            class="form-control" 
+          <input
+            v-model="form.location"
+            type="text"
+            class="form-control"
             id="location"
             required
+            placeholder="np. Warszawa, Cała Polska"
           >
         </div>
       </div>
     </div>
-    
+
     <div class="mb-3">
       <label class="form-label">Typ wynagrodzenia</label>
       <div class="compensation-options">
         <div class="form-check">
-          <input 
-            v-model="form.compensation" 
-            class="form-check-input" 
-            type="radio" 
+          <input
+            v-model="form.compensation"
+            class="form-check-input"
+            type="radio"
             value="Cash"
             id="compensation-cash"
           >
@@ -88,10 +91,10 @@
           </label>
         </div>
         <div class="form-check">
-          <input 
-            v-model="form.compensation" 
-            class="form-check-input" 
-            type="radio" 
+          <input
+            v-model="form.compensation"
+            class="form-check-input"
+            type="radio"
             value="Barter"
             id="compensation-barter"
           >
@@ -100,10 +103,10 @@
           </label>
         </div>
         <div class="form-check">
-          <input 
-            v-model="form.compensation" 
-            class="form-check-input" 
-            type="radio" 
+          <input
+            v-model="form.compensation"
+            class="form-check-input"
+            type="radio"
             value="Mixed"
             id="compensation-mixed"
           >
@@ -113,29 +116,29 @@
         </div>
       </div>
     </div>
-    
+
     <div v-if="showBudgetFields" class="row">
       <div class="col-md-6">
         <div class="mb-3">
           <label for="budget_min" class="form-label">Budżet minimalny (PLN)</label>
-          <input 
-            v-model.number="form.budget_min" 
-            type="number" 
-            class="form-control" 
+          <input
+            v-model.number="form.budget_min"
+            type="number"
+            class="form-control"
             id="budget_min"
             min="0"
             :required="requiresBudget"
           >
         </div>
       </div>
-      
+
       <div class="col-md-6">
         <div class="mb-3">
           <label for="budget_max" class="form-label">Budżet maksymalny (PLN)</label>
-          <input 
-            v-model.number="form.budget_max" 
-            type="number" 
-            class="form-control" 
+          <input
+            v-model.number="form.budget_max"
+            type="number"
+            class="form-control"
             id="budget_max"
             min="0"
             :required="requiresBudget"
@@ -143,46 +146,37 @@
         </div>
       </div>
     </div>
-    
+
     <div v-if="showBarterField" class="mb-3">
       <label for="barter_descr" class="form-label">Opis barteru</label>
-      <textarea 
-        v-model="form.barter_descr" 
-        class="form-control" 
+      <textarea
+        v-model="form.barter_descr"
+        class="form-control"
         id="barter_descr"
         rows="3"
         :required="requiresBarter"
       ></textarea>
     </div>
-    
+
     <div class="mb-3">
       <label for="deadline" class="form-label">Deadline</label>
-      <input 
-        v-model="form.deadline" 
-        type="datetime-local" 
-        class="form-control" 
+      <input
+        v-model="form.deadline"
+        type="datetime-local"
+        class="form-control"
         id="deadline"
         required
       >
     </div>
-    
+
     <div v-if="error" class="alert alert-danger">
       {{ error }}
     </div>
-    
-    <div class="d-flex gap-2">
-      <button type="submit" class="btn btn-primary" :disabled="isLoading">
-        {{ isLoading ? 'Zapisywanie...' : (isEditing ? 'Aktualizuj' : 'Utwórz kampanię') }}
-      </button>
-      <button type="button" class="btn btn-secondary" @click="$emit('cancel')">
-        Anuluj
-      </button>
-    </div>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { reactive, computed, watch } from 'vue'
 import type { Campaign, CompensationType } from '../types'
 
 interface Props {
@@ -198,7 +192,6 @@ const emit = defineEmits<{
 }>()
 
 const error = ref<string | null>(null)
-const isEditing = computed(() => !!props.campaign)
 
 const form = reactive({
   title: '',
@@ -255,33 +248,6 @@ watch(() => form.compensation, (newType) => {
     form.barter_descr = ''
   }
 })
-
-const handleSubmit = () => {
-  error.value = null
-  
-  // Validation
-  if (requiresBudget.value && (!form.budget_min || !form.budget_max)) {
-    error.value = 'Budżet jest wymagany dla tego typu wynagrodzenia'
-    return
-  }
-  
-  if (requiresBarter.value && !form.barter_descr.trim()) {
-    error.value = 'Opis barteru jest wymagany dla tego typu wynagrodzenia'
-    return
-  }
-  
-  if (form.budget_min && form.budget_max && form.budget_min > form.budget_max) {
-    error.value = 'Budżet minimalny nie może być większy od maksymalnego'
-    return
-  }
-  
-  const submitData = {
-    ...form,
-    deadline: new Date(form.deadline).toISOString()
-  }
-  
-  emit('submit', submitData)
-}
 </script>
 
 <style scoped>
@@ -289,9 +255,19 @@ const handleSubmit = () => {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 
-.campaign-form {
-  max-width: 800px;
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 0.2rem rgba(125, 60, 255, 0.25);
 }
 </style>
