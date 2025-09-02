@@ -9,6 +9,7 @@ export interface User {
   social_links: string[]
   portfolio: PortfolioCampaign[]
   created_at: string
+  auth0_id?: string
 }
 
 export interface PortfolioCampaign {
@@ -82,4 +83,20 @@ export interface RegisterData {
 export interface AuthResponse {
   access_token: string
   token_type: string
+}
+
+// Auth0 specific types
+export interface Auth0LoginRequest {
+  auth0_id: string
+  email: string
+  display_name?: string
+  role: UserRole
+  picture?: string
+}
+
+export interface Auth0Config {
+  domain: string
+  client_id: string
+  audience: string
+  callback_url: string
 }

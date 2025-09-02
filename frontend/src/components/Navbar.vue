@@ -45,7 +45,7 @@
               <span class="navbar-text me-2">{{ user?.display_name }}</span>
             </li>
             <li class="nav-item">
-              <button @click="logout" class="btn btn-outline-danger">
+              <button @click="handleLogout" class="btn btn-outline-danger">
                 Wyloguj
               </button>
             </li>
@@ -60,16 +60,29 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useAuth0Store } from '../stores/auth0'
+import { useAuth0 } from '@auth0/auth0-vue'
 
 const authStore = useAuthStore()
+const auth0Store = useAuth0Store()
+const auth0 = useAuth0()
 const router = useRouter()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const isAdvertiser = computed(() => authStore.isAdvertiser)
 const user = computed(() => authStore.user)
 
-const logout = () => {
-  authStore.logout()
+// Sprawdź, czy użytkownik jest zalogowany przez Auth0
+const isAuth0User = computed(() => !!authStore.user?.auth0_id)
+
+const handleLogout = async () => {
+  // Jeśli użytkownik jest zalogowany przez Auth0, użyj Auth0 do wylogowania
+  if (isAuth0User.value && auth0.isAuthenticated.value) {
+    await auth0Store.logout()
+  } else {
+    // W przeciwnym razie użyj standardowego wylogowania
+    authStore.logout()
+  }
   router.push('/')
 }
 </script>

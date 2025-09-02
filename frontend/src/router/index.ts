@@ -6,6 +6,7 @@ import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Profile from '../views/Profile.vue'
 import ActivateAccount from '../views/ActivateAccount.vue'
+import Auth0Callback from '../views/Auth0Callback.vue'
 import NotFound from '../views/NotFound.vue'
 
 const router = createRouter({
@@ -34,6 +35,11 @@ const router = createRouter({
       name: 'activate',
       component: ActivateAccount,
       meta: { requiresGuest: true }
+    },
+    {
+      path: '/callback',
+      name: 'auth0-callback',
+      component: Auth0Callback
     },
     {
       path: '/dashboard',

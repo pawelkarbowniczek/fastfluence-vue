@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 
 
 class Settings:
@@ -28,7 +28,14 @@ class Settings:
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")  # SendGrid API Key for SMTP
     SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", "noreply@fastfluence.pl")
 
-    CORS_ORIGINS: list[str] = [
+    # Auth0 Configuration
+    AUTH0_DOMAIN: str = os.getenv("AUTH0_DOMAIN", "")
+    AUTH0_CLIENT_ID: str = os.getenv("AUTH0_CLIENT_ID", "")
+    AUTH0_CLIENT_SECRET: str = os.getenv("AUTH0_CLIENT_SECRET", "")
+    AUTH0_API_AUDIENCE: str = os.getenv("AUTH0_API_AUDIENCE", "")
+    AUTH0_CALLBACK_URL: str = os.getenv("AUTH0_CALLBACK_URL", f"{FRONTEND_URL}/callback")
+
+    CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
         "http://localhost:3000",
         "http://localhost:8080",

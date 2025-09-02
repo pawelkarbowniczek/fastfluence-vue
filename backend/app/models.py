@@ -54,6 +54,9 @@ class User(SQLModel, table=True):
     social_links: List[str] = Field(default_factory=list, sa_column=Column(JSON))
     portfolio: List[PortfolioCampaign] = Field(default_factory=list, sa_column=Column(JSON))
 
+    # Auth0 integration
+    auth0_id: Optional[str] = Field(default=None, unique=True, index=True)
+
     # Email activation fields
     is_active: bool = Field(default=False)
     activation_token: Optional[str] = Field(default=None)

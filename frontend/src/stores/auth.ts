@@ -17,11 +17,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       isLoading.value = true
       error.value = null
-      
+
       const response = await authApi.login(loginData)
-      token.value = response.access_token
-      localStorage.setItem('access_token', response.access_token)
-      
+      setToken(response.access_token)
+
       await fetchCurrentUser()
     } catch (err: any) {
       error.value = err.response?.data?.detail || 'Błąd logowania'
@@ -35,9 +34,9 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       isLoading.value = true
       error.value = null
-      
+
       const newUser = await authApi.register(registerData)
-      
+
       // Auto-login after registration
       await login({
         username: registerData.email,
@@ -54,7 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
   const fetchCurrentUser = async () => {
     try {
       if (!token.value) return
-      
+
       const currentUser = await userApi.getCurrentUser()
       user.value = currentUser
     } catch (err: any) {
@@ -80,6 +79,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Nowa funkcja do ustawiania tokena (używana przez Auth0Store)
+  const setToken = (accessToken: string) => {
+    token.value = accessToken
+    localStorage.setItem('access_token', accessToken)
+  }
+
   // Initialize store
   if (token.value) {
     fetchCurrentUser()
@@ -97,6 +102,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     updateProfile,
-    fetchCurrentUser
+    fetchCurrentUser,
+    setToken
   }
 })

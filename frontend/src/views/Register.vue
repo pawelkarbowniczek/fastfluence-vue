@@ -88,6 +88,38 @@
                 </div>
               </div>
 
+              <!-- Auth0 buttons -->
+              <div class="auth0-login-section mt-4">
+                <div class="text-center my-3 position-relative">
+                  <hr class="text-muted">
+                  <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted">
+                    lub
+                  </span>
+                </div>
+
+                <div class="d-grid gap-2 mt-3">
+                  <button
+                    type="button"
+                    @click="loginWithAuth0('advertiser')"
+                    class="btn btn-outline-primary"
+                    :disabled="isAuth0Loading"
+                  >
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Kontynuuj jako reklamodawca przez Auth0
+                  </button>
+
+                  <button
+                    type="button"
+                    @click="loginWithAuth0('creator')"
+                    class="btn btn-outline-success"
+                    :disabled="isAuth0Loading"
+                  >
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Kontynuuj jako influencer przez Auth0
+                  </button>
+                </div>
+              </div>
+
               <div class="text-center mt-4">
                 <router-link to="/login" class="text-decoration-none">
                   Masz już konto? Zaloguj się
@@ -211,6 +243,26 @@
                         {{ isLoading ? 'Rejestracja...' : 'Zarejestruj się' }}
                       </button>
 
+                      <!-- Auth0 register button -->
+                      <div class="auth0-login-section">
+                        <div class="text-center my-3 position-relative">
+                          <hr class="text-muted">
+                          <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted">
+                            lub
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          @click="loginWithAuth0(selectedRole)"
+                          class="btn btn-outline-secondary btn-lg w-100"
+                          :disabled="isAuth0Loading"
+                        >
+                          <i class="fas fa-sign-in-alt me-2"></i>
+                          Kontynuuj przez Auth0
+                        </button>
+                      </div>
+
                       <div class="text-center mt-3">
                         <router-link to="/login" class="text-decoration-none">
                           Masz już konto? Zaloguj się
@@ -232,6 +284,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useAuth0Store } from '../stores/auth0'
 import type { UserRole } from '../types'
 
 interface Props {
@@ -241,12 +294,14 @@ interface Props {
 const props = defineProps<Props>()
 
 const authStore = useAuthStore()
+const auth0Store = useAuth0Store()
 const router = useRouter()
 const route = useRoute()
 
 const selectedRole = ref<UserRole | null>(null)
 const hoveredRole = ref<UserRole | null>(null)
 const isLoading = ref(false)
+const isAuth0Loading = ref(false)
 const error = ref<string | null>(null)
 const registrationSuccess = ref(false)
 const registeredEmail = ref('')
@@ -285,6 +340,20 @@ const handleSubmit = async () => {
     error.value = err.response?.data?.detail || 'Błąd rejestracji'
   } finally {
     isLoading.value = false
+  }
+}
+
+const loginWithAuth0 = async (role: UserRole) => {
+  try {
+    isAuth0Loading.value = true
+    error.value = null
+
+    await auth0Store.login(role)
+    // Przekierowanie jest obsługiwane przez Auth0
+  } catch (err: any) {
+    error.value = err.message || 'Błąd logowania przez Auth0'
+  } finally {
+    isAuth0Loading.value = false
   }
 }
 
@@ -342,5 +411,9 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.auth0-login-section hr {
+  opacity: 0.25;
 }
 </style>

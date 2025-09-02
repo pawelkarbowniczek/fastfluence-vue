@@ -34,6 +34,7 @@ class UserUpdate(BaseModel):
 class UserResponse(UserBase):
     id: int
     created_at: datetime
+    auth0_id: Optional[str] = None
 
 class UserPublic(BaseModel):
     id: int
@@ -42,6 +43,20 @@ class UserPublic(BaseModel):
     website_url: Optional[str] = None
     social_links: List[str] = []
     portfolio: List[PortfolioCampaign] = []
+
+# Auth0 specific schemas
+class Auth0LoginRequest(BaseModel):
+    auth0_id: str
+    email: EmailStr
+    display_name: Optional[str] = None
+    role: UserRole
+    picture: Optional[str] = None
+
+class Auth0Config(BaseModel):
+    domain: str
+    client_id: str
+    audience: str
+    callback_url: str
 
 class CampaignBase(BaseModel):
     title: str

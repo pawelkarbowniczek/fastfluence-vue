@@ -1,12 +1,13 @@
 from datetime import timedelta, datetime
-from typing import Annotated
+from typing import Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from ..database import get_session
 from ..auth import authenticate_user, create_access_token, get_password_hash
+from ..auth0 import get_current_user_auth0
 from ..models import User
-from ..schemas import Token, UserCreate, UserResponse
+from ..schemas import Token, UserCreate, UserResponse, Auth0LoginRequest
 from ..config import settings
 from ..email import generate_activation_token, send_activation_email, send_welcome_email
 
@@ -152,3 +153,62 @@ def login(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post("/auth0/token", response_model=Token)
+def auth0_login(
+        auth0_data: Auth0LoginRequest,
+        session: Annotated[Session, Depends(get_session)]
+):
+    # Check if user with this Auth0 ID exists
+    user = session.exec(
+        select(User).where(User.auth0_id == auth0_data.auth0_id)
+    ).first()
+
+    # If user doesn't exist, create a new one
+    if not user:
+        # Check if email already exists
+        email_user = session.exec(
+            select(User).where(User.email == auth0_data.email)
+        ).first()
+
+        if email_user:
+            # Link Auth0 account with existing user
+            email_user.auth0_id = auth0_data.auth0_id
+            email_user.is_active = True  # Auth0 users are verified
+            session.add(email_user)
+            session.commit()
+            session.refresh(email_user)
+            user = email_user
+        else:
+            # Create new user
+            user = User(
+                email=auth0_data.email,
+                hashed_password="",  # Not used with Auth0
+                role=auth0_data.role,
+                display_name=auth0_data.display_name or auth0_data.email.split('@')[0],
+                contact_email=auth0_data.email,
+                auth0_id=auth0_data.auth0_id,
+                is_active=True  # Auth0 users are verified
+            )
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+
+    # Create a token for the user
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/auth0/info")
+def auth0_info():
+    """Return Auth0 configuration for the frontend"""
+    return {
+        "domain": settings.AUTH0_DOMAIN,
+        "client_id": settings.AUTH0_CLIENT_ID,
+        "audience": settings.AUTH0_API_AUDIENCE,
+        "callback_url": settings.AUTH0_CALLBACK_URL
+    }

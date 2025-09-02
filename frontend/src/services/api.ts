@@ -6,7 +6,8 @@ import type {
   CreatorFilters,
   LoginData,
   RegisterData,
-  AuthResponse
+  AuthResponse,
+  Auth0LoginRequest
 } from '../types'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
@@ -20,8 +21,6 @@ export const api = axios.create({
 
 // Request interceptor to add auth token
 api.interceptors.request.use((config) => {
-
-
   const token = localStorage.getItem('access_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
@@ -56,6 +55,18 @@ export const authApi = {
 
   resendActivation: (email: string): Promise<{ message: string }> =>
     api.post('/auth/resend-activation', null, { params: { email } }).then(res => res.data),
+
+  // Auth0 integration
+  auth0Login: (data: Auth0LoginRequest): Promise<AuthResponse> =>
+    api.post('/auth/auth0/token', data).then(res => res.data),
+
+  getAuth0Config: (): Promise<{
+    domain: string,
+    client_id: string,
+    audience: string,
+    callback_url: string
+  }> =>
+    api.get('/auth/auth0/info').then(res => res.data),
 }
 
 // User API

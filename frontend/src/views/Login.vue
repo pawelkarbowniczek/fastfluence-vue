@@ -65,6 +65,38 @@
                     {{ isLoading ? 'Logowanie...' : 'Zaloguj się' }}
                   </button>
 
+                  <!-- Auth0 login buttons -->
+                  <div class="auth0-login-section">
+                    <div class="text-center my-3 position-relative">
+                      <hr class="text-muted">
+                      <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted">
+                        lub
+                      </span>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                      <button
+                        type="button"
+                        @click="loginWithAuth0('advertiser')"
+                        class="btn btn-outline-primary"
+                        :disabled="isAuth0Loading"
+                      >
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Zaloguj jako reklamodawca przez Auth0
+                      </button>
+
+                      <button
+                        type="button"
+                        @click="loginWithAuth0('creator')"
+                        class="btn btn-outline-success"
+                        :disabled="isAuth0Loading"
+                      >
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Zaloguj jako influencer przez Auth0
+                      </button>
+                    </div>
+                  </div>
+
                   <div class="text-center mt-3">
                     <span class="text-muted">Nie masz konta? </span>
                     <router-link to="/register" class="text-decoration-none">
@@ -91,12 +123,16 @@
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useAuth0Store } from '../stores/auth0'
 import { authApi } from '../services/api'
+import type { UserRole } from '../types'
 
 const authStore = useAuthStore()
+const auth0Store = useAuth0Store()
 const router = useRouter()
 
 const isLoading = ref(false)
+const isAuth0Loading = ref(false)
 const error = ref<string | null>(null)
 const isResending = ref(false)
 const resendSuccess = ref(false)
@@ -125,6 +161,20 @@ const handleSubmit = async () => {
   }
 }
 
+const loginWithAuth0 = async (role: UserRole) => {
+  try {
+    isAuth0Loading.value = true
+    error.value = null
+
+    await auth0Store.login(role)
+    // Przekierowanie jest obsługiwane przez Auth0
+  } catch (err: any) {
+    error.value = err.message || 'Błąd logowania przez Auth0'
+  } finally {
+    isAuth0Loading.value = false
+  }
+}
+
 const resendActivation = async () => {
   try {
     isResending.value = true
@@ -150,5 +200,9 @@ const resendActivation = async () => {
 .card {
   border: none;
   backdrop-filter: blur(10px);
+}
+
+.auth0-login-section hr {
+  opacity: 0.25;
 }
 </style>
