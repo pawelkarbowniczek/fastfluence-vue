@@ -1,93 +1,122 @@
 <template>
   <div class="profile-page">
     <div class="container py-4">
+      <!-- Elegant breadcrumb -->
+      <div class="profile-navigation mb-4">
+        <router-link
+          to="/dashboard"
+          class="back-button"
+          title="Powrót do dashboard"
+        >
+          <i class="fas fa-arrow-left me-2"></i>
+          Powrót do Dashboard
+        </router-link>
+      </div>
+
       <div class="row justify-content-center">
         <div class="col-md-8">
-          <div class="card shadow-lg">
-            <div class="card-header bg-primary text-white">
-              <h2 class="mb-0">Mój profil</h2>
+          <div class="card shadow-lg profile-card">
+            <div class="card-header bg-gradient-primary text-white text-center position-relative">
+              <div class="profile-header-content">
+                <div class="profile-avatar mb-2">
+                  <div class="avatar-circle">
+                    {{ user?.display_name?.charAt(0)?.toUpperCase() || 'U' }}
+                  </div>
+                </div>
+                <h2 class="mb-0 profile-title">Mój profil</h2>
+                <p class="mb-0 opacity-75">Edytuj swoje dane i portfolio</p>
+              </div>
+
+              <router-link
+                to="/dashboard"
+                class="profile-close-btn"
+                title="Zamknij"
+              >
+                <i class="fas fa-times"></i>
+              </router-link>
             </div>
-            
+
+            <!-- reszta zawartości karty bez zmian -->
             <div class="card-body">
               <form @submit.prevent="handleSubmit">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="display_name" class="form-label">Nazwa wyświetlana</label>
-                      <input 
-                        v-model="form.display_name" 
-                        type="text" 
-                        class="form-control" 
+                      <input
+                        v-model="form.display_name"
+                        type="text"
+                        class="form-control"
                         id="display_name"
                         required
                       >
                     </div>
                   </div>
-                  
+
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="contact_email" class="form-label">Email kontaktowy</label>
-                      <input 
-                        v-model="form.contact_email" 
-                        type="email" 
-                        class="form-control" 
+                      <input
+                        v-model="form.contact_email"
+                        type="email"
+                        class="form-control"
                         id="contact_email"
                         required
                       >
                     </div>
                   </div>
                 </div>
-                
+
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="phone" class="form-label">Telefon</label>
-                      <input 
-                        v-model="form.phone" 
-                        type="tel" 
-                        class="form-control" 
+                      <input
+                        v-model="form.phone"
+                        type="tel"
+                        class="form-control"
                         id="phone"
                       >
                     </div>
                   </div>
-                  
+
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="website_url" class="form-label">Strona internetowa</label>
-                      <input 
-                        v-model="form.website_url" 
-                        type="url" 
-                        class="form-control" 
+                      <input
+                        v-model="form.website_url"
+                        type="url"
+                        class="form-control"
                         id="website_url"
                       >
                     </div>
                   </div>
                 </div>
-                
+
                 <div class="mb-3">
                   <label class="form-label">Media społecznościowe</label>
                   <div class="social-links-container">
-                    <div 
-                      v-for="(link, index) in form.social_links" 
+                    <div
+                      v-for="(link, index) in form.social_links"
                       :key="index"
                       class="input-group mb-2"
                     >
-                      <input 
-                        v-model="form.social_links[index]" 
-                        type="url" 
-                        class="form-control" 
+                      <input
+                        v-model="form.social_links[index]"
+                        type="url"
+                        class="form-control"
                         placeholder="https://instagram.com/username"
                       >
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         class="btn btn-outline-danger"
                         @click="removeSocialLink(index)"
                       >
                         Usuń
                       </button>
                     </div>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       class="btn btn-outline-primary btn-sm"
                       @click="addSocialLink"
                     >
@@ -95,12 +124,12 @@
                     </button>
                   </div>
                 </div>
-                
+
                 <div v-if="isCreator" class="mb-3">
                   <label class="form-label">Portfolio</label>
                   <div class="portfolio-container">
-                    <div 
-                      v-for="(item, index) in form.portfolio" 
+                    <div
+                      v-for="(item, index) in form.portfolio"
                       :key="index"
                       class="card mb-3"
                     >
@@ -109,57 +138,57 @@
                           <div class="col-md-6">
                             <div class="mb-2">
                               <label class="form-label small">Tytuł projektu</label>
-                              <input 
-                                v-model="item.title" 
-                                type="text" 
+                              <input
+                                v-model="item.title"
+                                type="text"
                                 class="form-control form-control-sm"
                                 required
                               >
                             </div>
                           </div>
-                          
+
                           <div class="col-md-6">
                             <div class="mb-2">
                               <label class="form-label small">Nazwa marki</label>
-                              <input 
-                                v-model="item.brand_name" 
-                                type="text" 
+                              <input
+                                v-model="item.brand_name"
+                                type="text"
                                 class="form-control form-control-sm"
                                 required
                               >
                             </div>
                           </div>
                         </div>
-                        
+
                         <div class="row">
                           <div class="col-md-6">
                             <div class="mb-2">
                               <label class="form-label small">Rola w kampanii</label>
-                              <input 
-                                v-model="item.role_in_campaign" 
-                                type="text" 
+                              <input
+                                v-model="item.role_in_campaign"
+                                type="text"
                                 class="form-control form-control-sm"
                                 required
                               >
                             </div>
                           </div>
-                          
+
                           <div class="col-md-6">
                             <div class="mb-2">
                               <label class="form-label small">Link do projektu</label>
-                              <input 
-                                v-model="item.landing_url" 
-                                type="url" 
+                              <input
+                                v-model="item.landing_url"
+                                type="url"
                                 class="form-control form-control-sm"
                               >
                             </div>
                           </div>
                         </div>
-                        
+
                         <div class="mb-2">
                           <label class="form-label small">Krótki opis (max 280 znaków)</label>
-                          <textarea 
-                            v-model="item.short_description" 
+                          <textarea
+                            v-model="item.short_description"
                             class="form-control form-control-sm"
                             maxlength="280"
                             rows="2"
@@ -169,10 +198,10 @@
                             {{ item.short_description.length }}/280
                           </div>
                         </div>
-                        
+
                         <div class="text-end">
-                          <button 
-                            type="button" 
+                          <button
+                            type="button"
                             class="btn btn-outline-danger btn-sm"
                             @click="removePortfolioItem(index)"
                           >
@@ -181,9 +210,9 @@
                         </div>
                       </div>
                     </div>
-                    
-                    <button 
-                      type="button" 
+
+                    <button
+                      type="button"
                       class="btn btn-outline-primary btn-sm"
                       @click="addPortfolioItem"
                     >
@@ -191,26 +220,26 @@
                     </button>
                   </div>
                 </div>
-                
+
                 <div v-if="error" class="alert alert-danger">
                   {{ error }}
                 </div>
-                
+
                 <div v-if="success" class="alert alert-success">
                   Profil został zaktualizowany pomyślnie!
                 </div>
-                
+
                 <div class="d-flex gap-2">
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     class="btn btn-primary"
                     :disabled="isLoading"
                   >
                     {{ isLoading ? 'Zapisywanie...' : 'Zapisz zmiany' }}
                   </button>
-                  
-                  <button 
-                    type="button" 
+
+                  <button
+                    type="button"
                     class="btn btn-outline-secondary"
                     @click="resetForm"
                   >
@@ -219,13 +248,13 @@
                 </div>
               </form>
             </div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
@@ -286,10 +315,10 @@ const handleSubmit = async () => {
     isLoading.value = true
     error.value = null
     success.value = false
-    
+
     // Filter out empty social links
     const cleanedSocialLinks = form.social_links.filter(link => link.trim())
-    
+
     const updateData = {
       display_name: form.display_name,
       contact_email: form.contact_email,
@@ -298,14 +327,14 @@ const handleSubmit = async () => {
       social_links: cleanedSocialLinks,
       portfolio: form.portfolio
     }
-    
+
     await authStore.updateProfile(updateData)
     success.value = true
-    
+
     setTimeout(() => {
       success.value = false
     }, 3000)
-    
+
   } catch (err: any) {
     error.value = err.response?.data?.detail || 'Błąd aktualizacji profilu'
   } finally {
@@ -323,21 +352,108 @@ onMounted(() => {
   initializeForm()
 })
 </script>
-
 <style scoped>
 .profile-page {
-  min-height: 80vh;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 0;
 }
 
-.social-links-container, .portfolio-container {
-  border: 1px solid #dee2e6;
-  border-radius: 0.375rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
+.profile-navigation {
+  margin-bottom: 2rem;
 }
 
-.portfolio-container .card {
-  border: 1px solid #dee2e6;
-  background-color: white;
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.profile-card {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--violet) 0%, #6B2FDB 100%);
+  padding: 3rem 2rem 2rem;
+}
+
+.profile-header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.profile-avatar {
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-circle {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.profile-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.profile-close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.profile-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.card-body {
+  padding: 3rem;
+  background: white;
 }
 </style>
