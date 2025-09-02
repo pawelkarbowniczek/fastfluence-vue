@@ -29,7 +29,7 @@ services:
       # SendGrid Configuration (recommended)
       USE_SENDGRID_API: "true"
       SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      SMTP_FROM_EMAIL: noreply@fastfluence.pl
+      SMTP_FROM_EMAIL: noreply@mail.fastfluence.pl
 
       # Alternative SMTP Configuration (Gmail example)
       # USE_SENDGRID_API: "false"
