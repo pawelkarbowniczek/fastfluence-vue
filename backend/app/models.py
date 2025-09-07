@@ -83,7 +83,7 @@ class Campaign(SQLModel, table=True):
     deadline: datetime
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-    owner: User = Relationship(back_populates="campaigns")
+    owner: Optional[User] = Relationship(back_populates="campaigns")
     applications: List["Application"] = Relationship(back_populates="campaign")
 
 
@@ -92,8 +92,9 @@ class Application(SQLModel, table=True):
     campaign_id: int = Field(foreign_key="campaign.id")
     creator_id: int = Field(foreign_key="user.id")
     pitch_text: str
+    proposed_price: Optional[int] = None
     status: ApplicationStatus = Field(default=ApplicationStatus.PENDING)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-    campaign: Campaign = Relationship(back_populates="applications")
-    creator: User = Relationship(back_populates="applications")
+    campaign: Optional[Campaign] = Relationship(back_populates="applications")
+    creator: Optional[User] = Relationship(back_populates="applications")

@@ -6,6 +6,7 @@ import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Profile from '../views/Profile.vue'
 import AddCampaign from '../views/AddCampaign.vue'
+import CampaignDetails from '../views/CampaignDetails.vue'
 import ActivateAccount from '../views/ActivateAccount.vue'
 import Auth0Callback from '../views/Auth0Callback.vue'
 import NotFound from '../views/NotFound.vue'
@@ -65,6 +66,13 @@ const router = createRouter({
       name: 'edit-campaign',
       component: AddCampaign,
       meta: { requiresAuth: true, requiresAdvertiser: true },
+      props: true
+    },
+    {
+      path: '/campaigns/:id',
+      name: 'campaign-details',
+      component: CampaignDetails,
+      meta: { requiresAuth: true },
       props: true
     },
     {

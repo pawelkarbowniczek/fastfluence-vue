@@ -70,7 +70,12 @@
                   >
                     <template #cell-title="{ item }">
                       <div class="campaign-title">
-                        <strong>{{ item.title }}</strong>
+                        <router-link
+                          :to="`/campaigns/${item.id}`"
+                          class="text-decoration-none fw-bold"
+                        >
+                          {{ item.title }}
+                        </router-link>
                         <small class="text-muted d-block">{{ item.category }}</small>
                       </div>
                     </template>
@@ -90,6 +95,13 @@
                     </template>
                     <template #actions="{ item }">
                       <div class="action-buttons">
+                        <router-link
+                          :to="`/campaigns/${item.id}`"
+                          class="btn btn-sm btn-outline-info me-2"
+                        >
+                          <i class="fas fa-eye me-1"></i>
+                          Zobacz
+                        </router-link>
                         <router-link
                           :to="`/campaigns/edit/${item.id}`"
                           class="btn btn-sm btn-outline-primary me-2"
@@ -271,204 +283,3 @@ onMounted(() => {
   loadData()
 })
 </script>
-
-<style scoped>
-.dashboard {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 0;
-}
-
-.dashboard-hero {
-  padding: 3rem 2rem;
-  margin-bottom: 2rem;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-.hero-avatar {
-  display: flex;
-  justify-content: center;
-}
-
-.avatar-circle {
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: white;
-  backdrop-filter: blur(10px);
-}
-
-.hero-title {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  letter-spacing: -0.025em;
-}
-
-.hero-subtitle {
-  font-size: 1.2rem;
-  font-weight: 400;
-}
-
-.search-section {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.content-card {
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(20px);
-  border: none;
-}
-
-.card-header-custom {
-  background: linear-gradient(135deg, rgba(125, 60, 255, 0.1) 0%, rgba(212, 255, 50, 0.1) 100%);
-  padding: 2rem;
-  border-bottom: 1px solid rgba(125, 60, 255, 0.1);
-}
-
-.header-info h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.section-subtitle {
-  font-size: 0.95rem;
-}
-
-.card-body-custom {
-  padding: 2rem;
-}
-
-.btn-gradient {
-  background: linear-gradient(135deg, var(--violet) 0%, #6B2FDB 100%);
-  border: none;
-  color: white;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-.btn-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(125, 60, 255, 0.3);
-  color: white;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-}
-
-.empty-icon {
-  margin-bottom: 1.5rem;
-  opacity: 0.5;
-}
-
-.badge-custom {
-  font-size: 0.75rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  font-weight: 500;
-}
-
-.badge-success {
-  background-color: #d1e7dd;
-  color: #0f5132;
-}
-
-.badge-info {
-  background-color: #cff4fc;
-  color: #055160;
-}
-
-.badge-warning {
-  background-color: #fff3cd;
-  color: #664d03;
-}
-
-.campaign-title strong {
-  font-size: 1rem;
-  color: #2c3e50;
-}
-
-.deadline-info {
-  font-weight: 500;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn-sm {
-  border-radius: 6px;
-  font-weight: 500;
-}
-
-.btn-outline-primary {
-  border-color: var(--violet);
-  color: var(--violet);
-}
-
-.btn-outline-primary:hover {
-  background-color: var(--violet);
-  border-color: var(--violet);
-}
-
-.campaign-card-enhanced,
-.creator-card-enhanced {
-  transition: all 0.3s ease;
-}
-
-.campaign-card-enhanced:hover,
-.creator-card-enhanced:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-}
-
-.custom-table {
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-
-  .avatar-circle {
-    width: 80px;
-    height: 80px;
-    font-size: 2rem;
-  }
-
-  .card-header-custom,
-  .card-body-custom {
-    padding: 1.5rem;
-  }
-}
-</style>

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import create_db_and_tables
-from .routers import auth, campaigns, creators, users
+from .routers import auth, campaigns, creators, users, applications
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -26,6 +26,7 @@ app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["aut
 app.include_router(campaigns.router, prefix=f"{settings.API_V1_STR}/campaigns", tags=["campaigns"])
 app.include_router(creators.router, prefix=f"{settings.API_V1_STR}/creators", tags=["creators"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
+app.include_router(applications.router, prefix=f"{settings.API_V1_STR}/applications", tags=["applications"])
 
 @app.get("/")
 def root():

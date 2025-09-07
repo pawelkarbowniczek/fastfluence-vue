@@ -5,7 +5,6 @@ from ..database import get_session
 from ..deps import get_current_active_user
 from ..models import Application, Campaign, User, ApplicationStatus
 from ..schemas import ApplicationCreate, ApplicationResponse, ApplicationUpdate
-from ..email import send_application_notification_email
 import logging
 
 logger = logging.getLogger(__name__)
@@ -66,12 +65,11 @@ def create_application(
     session.commit()
     session.refresh(db_application)
 
-    # Send email notification to campaign owner
-    try:
-        send_application_notification_email(campaign, db_application, current_user)
-    except Exception as e:
-        logger.error(f"Failed to send application notification email: {e}")
-        # Don't fail the application creation if email fails
+    # Load relationships
+    db_application.campaign = session.get(Campaign, db_application.campaign_id)
+    db_application.creator = session.get(User, db_application.creator_id)
+    if db_application.campaign:
+        db_application.campaign.owner = session.get(User, db_application.campaign.owner_id)
 
     return db_application
 
@@ -101,6 +99,16 @@ def get_applications(
         query = query.where(Application.status == status)
 
     applications = session.exec(query).all()
+
+    # Load relationships
+    for application in applications:
+        if not application.campaign:
+            application.campaign = session.get(Campaign, application.campaign_id)
+        if not application.creator:
+            application.creator = session.get(User, application.creator_id)
+        if application.campaign and not hasattr(application.campaign, 'owner'):
+            application.campaign.owner = session.get(User, application.campaign.owner_id)
+
     return applications
 
 
@@ -113,6 +121,14 @@ def get_application(
     application = session.get(Application, application_id)
     if not application:
         raise HTTPException(status_code=404, detail="Aplikacja nie została znaleziona")
+
+    # Load relationships
+    if not application.campaign:
+        application.campaign = session.get(Campaign, application.campaign_id)
+    if not application.creator:
+        application.creator = session.get(User, application.creator_id)
+    if application.campaign and not hasattr(application.campaign, 'owner'):
+        application.campaign.owner = session.get(User, application.campaign.owner_id)
 
     # Check permissions
     if current_user.role == "creator" and application.creator_id != current_user.id:
@@ -134,6 +150,10 @@ def update_application_status(
     if not application:
         raise HTTPException(status_code=404, detail="Aplikacja nie została znaleziona")
 
+    # Load campaign relationship
+    if not application.campaign:
+        application.campaign = session.get(Campaign, application.campaign_id)
+
     # Only campaign owner can update application status
     if application.campaign.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Brak uprawnień")
@@ -144,6 +164,13 @@ def update_application_status(
     session.add(application)
     session.commit()
     session.refresh(application)
+
+    # Load relationships for response
+    if not application.creator:
+        application.creator = session.get(User, application.creator_id)
+    if application.campaign and not hasattr(application.campaign, 'owner'):
+        application.campaign.owner = session.get(User, application.campaign.owner_id)
+
     return application
 
 

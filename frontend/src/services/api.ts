@@ -56,6 +56,9 @@ export const authApi = {
 
   resendActivation: (email: string): Promise<{ message: string }> =>
     api.post('/auth/resend-activation', null, { params: { email } }).then(res => res.data),
+
+  auth0Login: (data: any): Promise<AuthResponse> =>
+    api.post('/auth/auth0/token', data).then(res => res.data),
 }
 
 // User API

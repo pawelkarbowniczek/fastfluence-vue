@@ -9,6 +9,7 @@ export interface User {
   social_links: string[]
   portfolio: PortfolioCampaign[]
   created_at: string
+  auth0_id?: string
 }
 
 export interface PortfolioCampaign {
@@ -101,4 +102,12 @@ export interface ApplicationCreateData {
   campaign_id: number
   pitch_text: string
   proposed_price?: number
+}
+
+export interface Auth0LoginRequest {
+  auth0_id: string
+  email: string
+  display_name?: string
+  role: UserRole
+  picture?: string
 }

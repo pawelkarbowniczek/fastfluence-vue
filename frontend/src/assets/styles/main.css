@@ -225,3 +225,186 @@ body {
   border-color: #C2E62A;
   color: var(--black);
 }
+/* Dodatkowe style dla CampaignDetails.vue - dodaj do main.css */
+
+.campaign-details-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.campaign-header-card {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.campaign-header-content .campaign-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.badge-custom {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.compensation-section {
+  background: rgba(125, 60, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(125, 60, 255, 0.1);
+}
+
+.budget-range {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.budget-item {
+  flex: 1;
+  text-align: center;
+}
+
+.budget-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.budget-separator {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.barter-description {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--violet);
+  margin: 0;
+  font-style: italic;
+}
+
+.owner-avatar {
+  width: 50px;
+  height: 50px;
+  background: var(--violet);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.stat-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.application-form {
+  background: rgba(125, 60, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(125, 60, 255, 0.1);
+}
+
+.sticky-top {
+  position: sticky;
+  top: 1rem;
+}
+
+/* Badge styles for compensation types */
+.badge-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 25px;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.badge-info {
+  background-color: rgba(23, 162, 184, 0.1);
+  color: #17a2b8;
+  border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+.badge-warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+/* Campaign card enhancements */
+.campaign-card .card-title a {
+  color: var(--violet);
+  transition: color 0.2s ease;
+}
+
+.campaign-card .card-title a:hover {
+  color: #6B2FDB;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .campaign-details-page {
+    padding: 1rem 0;
+  }
+
+  .bg-gradient-primary {
+    padding: 1.5rem;
+  }
+
+  .campaign-title {
+    font-size: 1.5rem;
+  }
+
+  .budget-range {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .budget-separator {
+    transform: rotate(90deg);
+  }
+
+  .campaign-badges {
+    justify-content: center;
+  }
+}

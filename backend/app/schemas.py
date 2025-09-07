@@ -91,11 +91,18 @@ class CampaignResponse(CampaignBase):
     created_at: datetime
     owner: UserPublic
 
+# Application schemas
 class ApplicationBase(BaseModel):
     pitch_text: str
+    proposed_price: Optional[int] = None
 
 class ApplicationCreate(ApplicationBase):
     campaign_id: int
+
+class ApplicationUpdate(BaseModel):
+    status: Optional[ApplicationStatus] = None
+    pitch_text: Optional[str] = None
+    proposed_price: Optional[int] = None
 
 class ApplicationResponse(ApplicationBase):
     id: int
